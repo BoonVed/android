@@ -1,25 +1,26 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build:
-    machine: # executor type
-      image: ubuntu-2204:2022.04.2 # # recommended linux image - includes Ubuntu 
+  say-hello:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/base:stable
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
+      - checkout
       - run:
-          name: Fetch Dependencies
-          command: |
-            echo "Fetch Dependencies"
-            sudo apt install repo bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
-      - run:
-          name: Setup Repo
-          command: |
-            mkdir crdroid
-            cd crdroid
-            git config --global user.email "you@example.com"
-            git config --global user.name "Your Name"
-            repo init --no-repo-verify --depth=1 -u https://github.com/crdroidandroid/android.git -b 12.1
-            repo sync -j8
-            . build/envsetup.sh
-            brunch "juice"
-      - run:
-          name: upload
-          command: curl --upload-file crdroid/out/target/product/juice/crDroidAndroid-* https://transfer.sh/crdroid-juice 
+          name: "Say hello"
+          command: "echo Hello, World!"
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  say-hello-workflow:
+    jobs:
+      - say-hello
